@@ -1,0 +1,8 @@
+RewriteEngine on 
+RewriteCond %{REQUEST_FILENAME}\.php -f 
+RewriteRule ^(.*)$ $1.php
+RewriteCond %{REQUEST_FILENAME}\.html -f 
+RewriteRule ^(.*)$ $1.html
+
+RewriteRule ^authorise_yourself?$ login.php
+RewriteRule ^homepage?$ index.php
