@@ -44,7 +44,6 @@
 		case '6': // Request for emp_list table
 			$table = 'emp_list';
 			break;
-
 		case '7': // Request for routes table
 			$table = 'routes';
 			break;
@@ -650,7 +649,6 @@
 		}
 	}
 
-	
 	// distributors_table_modal_edit_view -->[ main purpose to find the selected territories and display them in select tag in distributors table modal edit ] ---> [ Request for territories list --> areas table (name) selection ]
     function getSelectedHTML_territories($sql,$bodyOnly=1){
         global $con, $uid, $dept_id, $data;
@@ -1139,6 +1137,51 @@
 		return $rHTML;
     }
 
+	// distributors_table_modal_edit modal -->[ main purpose to edit the routes list and display in select2 in Distributor table edit modal ]
+	function getSelectedHTML_dist_edit_routes_list($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id, $data;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			
+			if($row['id'] = $data){
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+				{
+					$r = $row['routes'];
+					$routes = explode(",",$r);
+				}
+
+				$bHTML = '';
+				$bHTML .= '<option value="" disabled>-- Select --</option>';
+
+				$query = " SELECT routes.* FROM routes WHERE is_active = 1 ";
+				//distributors.is_active AS distri_status LEFT JOIN distributors ON (routes.is_active = distributors.is_active) 
+				$stmt = $con->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$stmt->execute();
+
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+				{
+					// checking [areas table(id column) is equivalent to territories table(area coloumn)] is selected
+					// If selected then fetch all the territory table (name coloumn)
+					if(in_array($row['id'],$routes)){
+						//'.in_array($row['id'],$routes) ?"selected" : "" .'
+						$bHTML = $bHTML . '<option value="'.$row['id'].'" '."selected".' >'.$row['code'].' - '.$row['name'].'</option>';
+					}
+					else{
+						$bHTML = $bHTML . '<option value="'.$row['id'].'">'.$row['code'].' - '.$row['name'].'</option>';
+					}
+				}
+				$rHTML = $bHTML;
+			}
+		}
+		catch (PDOException $e)
+		{
+			$e->getMessage();
+		}
+		return $rHTML;
+	}
+
 	// distributors_table_modal_edit modal -->[ main purpose to add the areas and display in select2 in Distributor table edit modal ]
 	function getSelectedHTML_dist_areas($sql,$bodyOnly=1){
 		global $con, $filter;
@@ -1217,51 +1260,6 @@
 		return $rHTML;
 	}
 
-	// distributors_table_modal_edit modal -->[ main purpose to edit the routes list and display in select2 in Distributor table edit modal ]
-	function getSelectedHTML_dist_edit_routes_list($sql,$bodyOnly=1){
-		global $con, $uid, $dept_id, $data;
-		try
-		{
-			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$stmt->execute();
-			
-			if($row['id'] = $data){
-				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
-				{
-					$r = $row['routes'];
-					$routes = explode(",",$r);
-				}
-
-				$bHTML = '';
-				$bHTML .= '<option value="" disabled>-- Select --</option>';
-
-				$query = " SELECT routes.* FROM routes WHERE is_active = 1 ";
-				//distributors.is_active AS distri_status LEFT JOIN distributors ON (routes.is_active = distributors.is_active) 
-				$stmt = $con->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-				$stmt->execute();
-
-				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
-				{
-					// checking [areas table(id column) is equivalent to territories table(area coloumn)] is selected
-					// If selected then fetch all the territory table (name coloumn)
-					if(in_array($row['id'],$routes)){
-						//'.in_array($row['id'],$routes) ?"selected" : "" .'
-						$bHTML = $bHTML . '<option value="'.$row['id'].'" '."selected".' >'.$row['code'].' - '.$row['name'].'</option>';
-					}
-					else{
-						$bHTML = $bHTML . '<option value="'.$row['id'].'">'.$row['code'].' - '.$row['name'].'</option>';
-					}
-				}
-				$rHTML = $bHTML;
-			}
-		}
-		catch (PDOException $e)
-		{
-			$e->getMessage();
-		}
-		return $rHTML;
-	}
-
 	// distributors_table_modal_view modal -->[ main purpose to view the emp_list code, name, designation list and display in select2 in Distributor table view modal ]
 	function getSelectedHTML_dist_emp_view_list($sql,$bodyOnly=1){
 		global $con, $filter;
@@ -1336,7 +1334,9 @@
 		return ['r'=>$r];
 	}
 
-//------------------------------------------------------------------------------------------------
-//--------------------------------------functions end --------------------------------------------
-//------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------
+	//--------------------------------------functions end --------------------------------------------
+	//------------------------------------------------------------------------------------------------
+
+
 ?>

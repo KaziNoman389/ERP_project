@@ -305,7 +305,7 @@
     //********************Edit Distributor Data************************
     //*****************************************************************
 
-    //Error validation message while editing and uploading distributor(proprietor) image
+    //Start --> Error validation message while editing and uploading distributor(proprietor) image
     $("#edit_o_image").change(function(event) {
         if (event.target.files[0].size > 512000) {
             $("#error_message_edit").text("Image File too large, must be less than 500 KB.");
@@ -337,6 +337,7 @@
             $("#error_message_edit3").text("");
         }
     });
+    //------------------------------End --------------------------------
 
     //Fetch id's attributes on click edit buttons
     $("#distribution_table").on('click', '#btn_edit', function(e) {

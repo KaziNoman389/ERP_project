@@ -31,20 +31,15 @@
 </head>
 
 <body>
-
-
     <!-- start left-sidenav-->
     <?php include('../../include/left_sidebar.php') ?>
     <!--   end left-sidenav-->
 
-    <!-- months -->
-    <?php 
-        for($i=0; $i<=6; $i++) {
-            $next_six_months[] =date("M/y", strtotime( date( 'Y-m-01' )." +$i months"));
-        }
-    ?>
+    <!-- start months -->
+    <?php for($i=0; $i<=6; $i++) { $next_six_months[] = date("M/y", strtotime( date( 'Y-m-01' )." +$i months")); } ?>
     <!-- end months -->
 
+    <!-- start page-wrapper -->
     <div class="page-wrapper">
         <!-- Top Bar Start -->
         <?php include('../../include/top_bar.php'); ?>
@@ -62,6 +57,7 @@
                                     <h4 class="page-title"><?php echo $get_title; ?></h4>
                                 </div>
                                 <!--end col-->
+
                                 <div class="col-md-4">
                                     <div class="input-group">
                                         <button class="btn btn-secondary" type="button" id="button-addon1"><i
@@ -85,6 +81,7 @@
                                     </div>
                                 </div>
                                 <!--end col-->
+
                                 <div class="col-md-5 text-end mt-1">
                                     <!-- print button -->
                                     <a class="btn btn-sm btn-outline-primary printButton " data-bs-toggle="tooltip"
@@ -102,12 +99,11 @@
                             </div>
                             <!--end row-->
                         </div>
-                        <!--end page-title-box-->
+                        <!--end Page-Title-->
                     </div>
                     <!--end col-->
                 </div>
                 <!--end row-->
-                <!-- end page title end breadcrumb -->
 
 
                 <!-- ----------------------------------------------------------------------------------------------------- -->
@@ -291,16 +287,12 @@
                                             <h6>Attached Documents:</h6>
                                             <p>
                                                 <i>1. Application for Distributorship or letter of Inhent 2. Photocopy
-                                                    of
-                                                    Trade
-                                                    License, 3. Bank Statement (of last siox months), 4. Photocopy of
-                                                    NID,
-                                                    5. 2
-                                                    Copies of PP size Photo of the Distributor, 6. Renewed NID of Owner
-                                                    &
-                                                    Nominee, 7. Certification letter of RSM, 8. Organization's BIN
-                                                    Certificate
-                                                    and E-Tin Certificate.
+                                                    of Trade License, 3. Bank Statement (of last siox months), 4.
+                                                    Photocopy of
+                                                    NID, 5. 2 Copies of PP size Photo of the Distributor, 6. Renewed NID
+                                                    of Owner
+                                                    & Nominee, 7. Certification letter of RSM, 8. Organization's BIN
+                                                    Certificate and E-Tin Certificate.
                                                 </i>
                                             </p>
                                             <div id="sign">
@@ -2622,7 +2614,7 @@ $(document).ready(function() {
 });
 </script>
 
-<!-- js for add_modal adding total -->
+<!-- js for add_modal adding total investment -->
 <script>
 function add_sum() {
     var add_val_SDF = $("#add_val_SDF").val();
