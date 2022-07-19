@@ -47,6 +47,12 @@
 		case '7': // Request for routes table
 			$table = 'routes';
 			break;
+		case '8': // Request for outlets table
+			$table = 'outlets';
+			break;
+		case '9': // Request for opening balance table
+			$table = 'opening_balance';
+			break;
 	}
 
 
@@ -139,12 +145,12 @@
             $return_data = getTableHTML_Distributors_view($sql,true);
             break;
 			
-		case '14': // Request for emp_list for distributor table --> [for add & edit modal]
+		case '14': // Request for emp_list for distributor table --> [for edit modal]
 			$sql = " SELECT emp_list.*, region_wise_distri.id AS reg_id, region_wise_distri.distri AS reg_distri, region_wise_distri.org_id AS reg_org_id, distributors.id AS distri_id FROM ".$table." Left JOIN region_wise_distri ON (emp_list.org_id = region_wise_distri.org_id) LEFT JOIN distributors ON (region_wise_distri.distri = distributors.id) WHERE (emp_list.org_id = region_wise_distri.org_id) AND emp_list.org_id = ".$data." GROUP BY id ";
             $return_data = getSelectedHTML_edit_EMP_List($sql,true);
             break;
 		
-		case '15': // Request for emp_list for distributor table --> [for add & edit modal]
+		case '15': // Request for emp_list for distributor table --> [for add modal]
 			$sql = " SELECT emp_list.*, region_wise_distri.id AS reg_id, region_wise_distri.distri AS reg_distri, region_wise_distri.org_id AS reg_org_id, distributors.id AS distri_id FROM ".$table." Left JOIN region_wise_distri ON (emp_list.org_id = region_wise_distri.org_id) LEFT JOIN distributors ON (region_wise_distri.distri = distributors.id) WHERE (emp_list.org_id = region_wise_distri.org_id) AND emp_list.org_id = ".$data." GROUP BY id ";
             $return_data = getSelectedHTML_add_EMP_List($sql,true);
             break;
@@ -183,6 +189,76 @@
 		$sql = " SELECT routes.* FROM ".$table." WHERE is_active = 1 ";
 		$return_data = getSelectedHTML_dist_routes_names($sql,true);
 		break;
+
+		// -------------------------------------------------------------------
+		// -------------------ALL Cases for Routes TABLE----------------------
+		// -------------------------------------------------------------------
+
+		case '23': // Request for routes list --> for table view purpose
+			$sql = " SELECT routes.* FROM ".$table." ORDER BY `code` ASC ";
+			$return_data = getTableHTML_routes_table($sql,true);
+			break;
+
+		case '24': // Request for routes list --> routes table --> [for modal edit purpose]
+			$sql = " SELECT routes.* FROM ".$table." WHERE id = ".$data." ORDER BY `code` ASC ";
+			$return_data = getTableHTML_routes_SelectedID($sql,true);
+			break;
+
+
+		// --------------------------------------------------------------------
+		// -------------------ALL Cases for Outlets TABLE----------------------
+		// --------------------------------------------------------------------
+
+		case '25': // Request for outlets list --> for table view purpose
+			$sql = " SELECT outlets.* FROM ".$table." ORDER BY `id` ASC ";
+			$return_data = getTableHTML_outlets_table($sql,true);
+			break;
+
+		case '26': // Request for outlets list --> outlets table --> [for modal edit purpose]
+			$sql = " SELECT outlets.* FROM ".$table." WHERE id = ".$data." ORDER BY `id` ASC ";
+			$return_data = getTableHTML_outlets_fetch_SelectedID($sql,true);
+			break;
+		
+		case '27': // Request for distributors list --> distributor table (code,name) --> [for modal add purpose]
+			$sql = " SELECT distributors.* FROM ".$table." ORDER BY `code` ASC ";
+			$return_data = getSelectedHTML_distributor_names($sql,true);
+			break;
+
+		case '28': // Request for outlets list --> distributor table (code,name) selection --> [for modal view purpose]
+			$sql = " SELECT outlets.*, FROM ".$table." WHERE ORDER BY `name` DESC ";
+			$return_data = getTableHTML_outlets_distributors_SelectedID($sql,true);
+			break;
+
+		case '29': // Request for outlets list --> distributor table (code,name) selection --> [for modal view purpose]
+			$sql = " SELECT distributors.* FROM ".$table;
+			$return_data = getSelectedHTML_outlets_distributor_names($sql,true);
+			break;
+		
+		case '30': // Request for view for distributor table --> [for view modal only]
+			$sql = " SELECT outlets.* FROM ".$table." WHERE id = ".$data." ORDER BY `name` ASC ";
+            $return_data = getTableHTML_outlets_view($sql,true);
+            break;
+
+		case '31': // Request for distributors list --> distributors table (code,name) selection --> [for outlets modal edit purpose]
+			$sql = " SELECT outlets.id, outlets.distributor, outlets.is_active FROM outlets WHERE id = ".$data;
+            $return_data = getSelectedHTML_outlets_edit_distributors_list($sql,true);
+            break;
+
+		case '32': // Request for routes list --> routes table (code,name) selection --> [for outlets modal edit purpose]
+			$sql = " SELECT outlets.id, outlets.routes, outlets.is_active FROM outlets WHERE id = ".$data;
+            $return_data = getSelectedHTML_outlets_edit_routes_list($sql,true);
+            break;
+
+		// -------------------------------------------------------------------
+		// ----------------ALL Cases for Opening Balance TABLE---------------- 
+		// -------------------------------------------------------------------
+			
+		case '33': // Request for opening balance list --> for table view purpose
+			$sql = " SELECT opening_balance.*, distributors.id AS distri_id ,distributors.name AS distri_name FROM ".$table." LEFT JOIN distributors ON(opening_balance.distributor = distributors.id) ORDER BY opening_balance.`id` ";
+			$return_data = getTableHTML_open_bal_table($sql,true);
+			break;
+			
+		
 	}
 
 
@@ -196,7 +272,6 @@
 	//------------------------------------------------------------------------------------------------
 	//--------------------------------------functions start-------------------------------------------
 	//------------------------------------------------------------------------------------------------
-
 
 
 	//---------------------------------------------------------------------------------
@@ -386,9 +461,9 @@
 	
 
 
-	//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------
 	//-----------------------Territories Table Functions start-------------------------------
-	//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------
 	
 	// area_table_view -->[ main purpose is to fetch table data in the area table ]
 	function getTableHTML_territories($sql,$bodyOnly=1){
@@ -1334,9 +1409,385 @@
 		return ['r'=>$r];
 	}
 
+
+	//----------------------------------------------------------------------------------------
+	//-----------------------Routes Table Functions start-------------------------------------
+	//----------------------------------------------------------------------------------------
+
+
+	// Routes_table_view -->[ main purpose is to fetch table data in the routes table ]
+	function getTableHTML_routes_table($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= ' <tr>
+                                <td><p>'.$counter++.'</td>
+                                <td><p>'.$row["code"].'</td>
+                                <td><p>'.$row["name"].'</td>
+                                <td><p>'.$row["definition"].'</td>
+                                <td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</td>
+                                <td class="text-end">    
+                                    <a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
+                                        <i class="fas fa-pencil-alt font-13"></i>
+                                    </a>
+                                </td>
+                            </tr>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// Routes_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
+	function getTableHTML_routes_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+			
+			$rHTML = $row;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+
+	//-----------------------------------------------------------------------------------------
+	//-----------------------Outlets Table Functions start-------------------------------------
+	//-----------------------------------------------------------------------------------------
+
+	// Routes_table_view -->[ main purpose is to fetch table data in the routes table ]
+	function getTableHTML_outlets_table($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= ' <tr>
+                                <td><p>'.$counter++.'</td>
+                                <td><p>'.$row["name"].'</td>
+                                <td><p>'.$row["address"].'</td>
+								<td><p>'.$row["owner_name"].'</td>
+                                <td><p>'.($row["is_approved"]==0 ? "No" : "Yes").'</td>
+                                <td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</td>
+                                <td class="text-end">
+									<a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="View" data-id='.$row["id"].' id="btn_view">
+										<i class="fas fa-eye font-13"></i>
+                                    </a>  
+                                    <a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
+                                        <i class="fas fa-pencil-alt font-13"></i>
+                                    </a>
+                                </td>
+                            </tr>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// Routes_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
+	function getTableHTML_outlets_fetch_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+			
+			$rHTML = $row;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// outlets_table_add_modal -->[ main purpose to add the distributors and display in select2 in Outlets table add modal ]
+	function getSelectedHTML_distributor_names($sql,$bodyOnly=1){
+        global $con, $uid, $dept_id;
+		
+		try
+		{
+			$bHTML = '';
+			$bHTML .= '<option value="" disabled>-- Select --</option>';
+
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				if($row['is_active'] == 1){
+					$bHTML = $bHTML . '<option value="'.$row['id'].'" onclick=selected>'.$row['code'].' - '.$row['name'].'</option>';
+				}
+				else{
+					$bHTML = $bHTML . '';
+				}
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+    }
+
+	// distributors_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit & modal view ]
+	function getTableHTML_outlets_distributors_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+                $distributors = $row['distributor'];
+				$routes = $row['routes'];
+			}
+			return ['distributors'=>$distributors , 'routes'=>$routes ];
+		}
+		catch (PDOException $e) 
+		{
+			$e->getMessage();
+		}
+	}
+
+	// distributors_table_modal_view modal -->[ main purpose to view the area_list code, name list and display in select2 in Distributor table view modal ]
+	function getSelectedHTML_outlets_distributor_names($sql,$bodyOnly=1){
+		global $con, $filter, $data;
+
+		$distributors = '';
+		$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		$stmt->execute();
+
+		$ds = explode(",",$data);
+		// print_r($ds);
+
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT))
+		{
+			if(in_array($row['id'], $ds)){
+				$distributors .= $row['code']. " - " .$row['name'] . ", ";
+			}
+			else{
+				$distributors .= '';
+			}
+		}
+		$d = substr_replace($distributors ,"",-2);
+		return ['d'=>$d];
+	}
+
+	// distributors_table_modal_view -->[ main purpose is to fetch all the data of the input fields in the modal view ]
+	function getTableHTML_outlets_view($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id, $data;
+
+		$part1_body = ''; $distributor=''; $routes ='';
+		$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		$stmt->execute();
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+		{
+			$distributor = $row['distributor']; 
+			$routes = $row['routes']; 
+
+			if($row["id"] == $data) {
+				$part1_body .= ' <tr>
+								<td style="width: 25%;"><p>Name :</p></td>
+								<td class=" view"><p>'.$row['name'].'</p></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Address :</p></td>
+								<td class=" view"><p>'.$row['address'].'</p></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Owner Name :</p></td>
+								<td class=" view"><p>'.$row["owner_name"].'</p></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Owner Contact 1 :</p></td>
+								<td class=" view"><p>'.$row["owner_contact_1"].'</p></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Owner Contact 2 :</p></td>
+								<td class=" view"><p>'.$row["owner_contact_2"].'</p></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Business Contact 1 :</p></td>
+								<td class=" view"><p>'.$row["business_contact_1"].'</p></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Business Contact 2 :</p></td>
+								<td class=" view"><p>'.$row["business_contact_2"].'</p></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Distributor:</p></td>
+								<td class="view" id="distri"></td>
+							</tr>
+							<tr>
+								<td style="width: 25%;"><p>Routes :</p></td>
+								<td class="view" id="route"></td>
+							</tr>';
+			}
+			return [ 't1'=>$part1_body, 'ds'=>$distributor, 'rs'=>$routes];
+		}
+	}
+
+	// outlets_table_modal_edit modal -->[ main purpose to edit the distributors list and display in select2 in outlets table edit modal ]
+	function getSelectedHTML_outlets_edit_distributors_list($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id, $data;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			
+			if($row['id'] = $data){
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+				{
+					$ds = $row['distributor'];
+					$distri_arr = explode(",",$ds);
+				}
+
+				$bHTML = '';
+				$bHTML .= '<option value="" disabled>-- Select --</option>';
+
+				$query = " SELECT distributors.* FROM distributors WHERE is_active = 1 ";
+				$stmt = $con->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$stmt->execute();
+
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+				{
+					// checking if the distributors table (id === to the id's stored in distri array) from outlets table distributor
+					if(in_array($row['id'], $distri_arr)){
+						$bHTML = $bHTML . '<option value="'.$row['id'].'" '."selected".' >'.$row['code'].' - '.$row['name'].'</option>';
+					}
+					else{
+						$bHTML = $bHTML . '<option value="'.$row['id'].'">'.$row['code'].' - '.$row['name'].'</option>';
+					}
+				}
+				$rHTML = $bHTML;
+			}
+		}
+		catch (PDOException $e)
+		{
+			$e->getMessage();
+		}
+		return $rHTML;
+	}
+
+	// outlets_table_modal_edit modal -->[ main purpose to edit the distributors list and display in select2 in outlets table edit modal ]
+	function getSelectedHTML_outlets_edit_routes_list($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id, $data;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			
+			if($row['id'] = $data){
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+				{
+					$r = $row['routes'];
+					$route_arr = explode(",",$r);
+				}
+
+				$bHTML = '';
+				$bHTML .= '<option value="" disabled>-- Select --</option>';
+
+				$query = " SELECT routes.* FROM routes WHERE is_active = 1 ";
+				$stmt = $con->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$stmt->execute();
+
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+				{
+					// checking if the routes table (id === to the id's stored in routes array) from outlets table routes
+					if(in_array($row['id'], $route_arr)){
+						$bHTML = $bHTML . '<option value="'.$row['id'].'" '."selected".' >'.$row['code'].' - '.$row['name'].'</option>';
+					}
+					else{
+						$bHTML = $bHTML . '<option value="'.$row['id'].'">'.$row['code'].' - '.$row['name'].'</option>';
+					}
+				}
+				$rHTML = $bHTML;
+			}
+		}
+		catch (PDOException $e)
+		{
+			$e->getMessage();
+		}
+		return $rHTML;
+	}
+
+	
+	//-----------------------------------------------------------------------------------------
+	//-------------------------Opening Balance Table Functions start---------------------------
+	//-----------------------------------------------------------------------------------------
+
+
+	// opening_balance_table_view -->[ main purpose is to fetch table data in the opening_balance table ] 
+	// + edit live data =>[edit_balance]
+	function getTableHTML_open_bal_table($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= ' <tr>
+                                <td><p>'.$counter++.'</td>
+								if('.$row["distributor"].' = '.$row["distri_id"].'){
+									<td>
+										<input type="text" name="edit_distributors[]" id="edit_distributors" value="'.$row["distri_id"].'" hidden>
+										<p>'.$row["distri_name"].'</p>
+									</td>
+								}
+                                <td class="text-center">
+									<input style="width: 30%;" type="text" name="edit_balance[]" id="edit_balance" placeholder="Edit Balance" data-id= "'.$row['id'].'" value= "'.$row['open_bal'].'" >
+									<p style = "display: none;">'.$row["open_bal"].'</p>
+								</td>
+                            </tr>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		return $rHTML;
+	}
+	
+
 	//------------------------------------------------------------------------------------------------
 	//--------------------------------------functions end --------------------------------------------
 	//------------------------------------------------------------------------------------------------
-
 
 ?>

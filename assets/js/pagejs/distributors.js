@@ -133,7 +133,7 @@
             $("#error_message_add3").text("");
         }
     });
-    ////// --------- end error validation --------- ///////
+    ////// --------- end error validation for image --------- ///////
 
 
     // region, depot ,area & territory dropdown lists --> for distributor

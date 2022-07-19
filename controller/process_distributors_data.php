@@ -390,6 +390,12 @@
 			// execute the query
 			$result = $stmt->execute();
 
+			$query3 = " INSERT INTO `opening_balance`(`distributor`,`open_bal`, `created_by`) VALUES('$add_distributors','0','$uid')";
+            // prepare the query
+            $stmt = $con->prepare($query3);
+            // execute the query
+            $result = $stmt->execute();
+
 			// ---------image ends-----------//
 
 			
