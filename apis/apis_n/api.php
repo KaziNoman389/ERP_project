@@ -254,10 +254,9 @@
 		// -------------------------------------------------------------------
 			
 		case '33': // Request for opening balance list --> for table view purpose
-			$sql = " SELECT opening_balance.*, distributors.id AS distri_id ,distributors.name AS distri_name FROM ".$table." LEFT JOIN distributors ON(opening_balance.distributor = distributors.id) ORDER BY opening_balance.`id` ";
+			$sql = " SELECT opening_balance.*, distributors.id AS distri_id, distributors.name AS distri_name FROM ".$table." LEFT JOIN distributors ON(opening_balance.distributor = distributors.id) ORDER BY opening_balance.`id` ";
 			$return_data = getTableHTML_open_bal_table($sql,true);
 			break;
-			
 		
 	}
 
@@ -1491,11 +1490,11 @@
 								<td><p>'.$row["owner_name"].'</td>
                                 <td><p>'.($row["is_approved"]==0 ? "No" : "Yes").'</td>
                                 <td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</td>
-                                <td class="text-end">
+                                <td>
 									<a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="View" data-id='.$row["id"].' id="btn_view">
 										<i class="fas fa-eye font-13"></i>
                                     </a>  
-                                    <a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
+                                    <a contentEditable="true" tabindex="0" class="focusable btn p-0" data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
                                         <i class="fas fa-pencil-alt font-13"></i>
                                     </a>
                                 </td>

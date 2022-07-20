@@ -101,7 +101,7 @@
                 <!-- ----------------------------------------------------------------------------------------------------- -->
                 <div class="card border-0">
                     <div class="card-body p-1">
-                        <div class="table-responsive">
+                        <div class="table-responsive" tabindex="0" class="focusable">
 
                             <!-- <form id="edit_opening_balance_form" method="POST"> -->
                             <input type="text" name="edit_id" id="edit_id" hidden />
