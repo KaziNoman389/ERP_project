@@ -53,6 +53,18 @@
 		case '9': // Request for opening balance table
 			$table = 'opening_balance';
 			break;
+		case '10': // Request for distri_targets table
+			$table = 'distri_targets';
+			break;
+		case '11': // Request for distri_target_details table
+			$table = 'distri_target_details';
+			break;
+		case '12': // Request for apps table
+			$table = 'apps';
+			break;
+		case '13':  // Request for functions table
+			$table = 'functions';
+			break;
 	}
 
 
@@ -250,14 +262,85 @@
             break;
 
 		// -------------------------------------------------------------------
-		// ----------------ALL Cases for Opening Balance TABLE---------------- 
+		// ----------------ALL Cases for Opening Balance TABLE----------------
 		// -------------------------------------------------------------------
 			
 		case '33': // Request for opening balance list --> for table view purpose
 			$sql = " SELECT opening_balance.*, distributors.id AS distri_id, distributors.name AS distri_name FROM ".$table." LEFT JOIN distributors ON(opening_balance.distributor = distributors.id) ORDER BY opening_balance.`id` ";
 			$return_data = getTableHTML_open_bal_table($sql,true);
 			break;
-		
+
+		// -------------------------------------------------------------------
+		// --------------ALL Cases for Distributors Target TABLE--------------
+		// -------------------------------------------------------------------
+
+		case '34': // Request for distri_target list --> for table view purpose
+			$sql = " SELECT distri_targets.* FROM ".$table." ORDER BY distri_targets.id ASC";
+			$return_data = getTableHTML_distri_target_table($sql,true);
+			break;
+
+		case '35': // Request for distri_target_details list --> for table edit modal view purpose
+			$sql = " SELECT * FROM ".$table." WHERE ";
+			$sql .= ($filter!='')? $filter : '';
+			$return_data = getTableHTML_distri_target_SelectedID($sql,true);
+			break;
+
+		case '36': // Request for depot list --> regions table (name) selection --> [for modal edit purpose]
+			$sql = " SELECT * FROM ".$table." WHERE id = ".$data;
+			$return_data = getTableHTML_name_SelectedID($sql,true);
+			break;
+
+		case '37': // Request for opening balance list --> for table view purpose
+			$sql = " SELECT distri_target_details.* FROM ".$table." WHERE distri_target_details.target = ".$data;
+			$return_data = getTableHTML_distributors_trade_details_table($sql,true);
+			break;
+
+		case '38': // region_list for distri_target_details view modal table select2 region input field
+			$sql = " SELECT region_id, region_name FROM ".$table." GROUP BY region_name ";
+			$return_data = getTableHTML_Distri_target_details_search_region_names_SelectedID($sql,true);
+			break;
+
+		case '39': // region_list search from distri_target_details view modal table
+			$sql = " SELECT * FROM ".$table." WHERE ";
+			$sql .= ($filter!='')? $filter : '';
+			$return_data = getTableHTML_search_region_SelectedID($sql,true);
+			break;
+
+		case '40': // depot_list for distri_target_details view modal table select2 depot input field
+			$sql = " SELECT depot_id, depot_name FROM ".$table." GROUP BY depot_name ";
+			$return_data = getTableHTML_Distri_target_details_search_depot_names_SelectedID($sql,true);
+			break;
+
+		case '41': // area_list for distri_target_details view modal table select2 area input field
+			$sql = " SELECT area_id, area_name FROM ".$table." GROUP BY area_name ";
+			$return_data = getTableHTML_Distri_target_details_search_area_names_SelectedID($sql,true);
+			break;
+
+		case '42': // territory_list for distri_target_details view modal table select2 territory input field
+			$sql = " SELECT territory, territorry_name FROM ".$table." GROUP BY territorry_name ";
+			$return_data = getTableHTML_Distri_target_details_search_territory_names_SelectedID($sql,true);
+			break;
+
+		// -------------------------------------------------------------------
+		// ----------------- ALL Cases for Apps Target TABLE -----------------
+		// -------------------------------------------------------------------
+
+		case '43': // Request for apps list --> for table view purpose
+			$sql = " SELECT * FROM ".$table." ORDER BY apps.id ASC";
+			$return_data = getTableHTML_apps_table($sql,true);
+			break;
+
+		case '44': // region_list search from distri_target_details view modal table
+			$sql = " SELECT * FROM ".$table." WHERE ";
+			$sql .= ($filter!='')? $filter : '';
+			$return_data = getTableHTML_apps_SelectedID($sql,true);
+			break;
+			
+		case '45': // Request for functions name list --> functions table ( unique names ) --> [for table modal function add purpose]
+			$sql = " SELECT DISTINCT `name` FROM ".$table." GROUP BY name ";
+			$return_data = getSelectedHTML_function_names($sql,true);
+			break;
+			
 	}
 
 
@@ -351,7 +434,7 @@
 			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
 			{
 				if($row['id'] == $matchID)
-					$rHTML = $rHTML . '<option value="'.$row['id'].'" selected>'.$row['name'].'</option>';
+					$rHTML = $rHTML . '<option value="'.$row['id'].'" '."selected".'>'.$row['name'].'</option>';
 				else
 					$rHTML = $rHTML . '<option value="'.$row['id'].'">'.$row['name'].'</option>';
 			}
@@ -1784,9 +1867,382 @@
 		return $rHTML;
 	}
 	
+	//-----------------------------------------------------------------------------------------
+	//-----------------------Distributors Target Table Functions start ------------------------
+	//-----------------------------------------------------------------------------------------
 
+	// distri_target_table_view -->[ main purpose is to fetch table data in the distri_target table ] 
+	function getTableHTML_distri_target_table($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= ' <tr>
+                                <td><p>'.$counter++.'</p></td>
+                                <td><p>'.$row["name"].'</p></td>
+                                <td><p>'.$row["eff_from"].'</p></td>
+								<td><p>'.$row["eff_till"].'</p></td>
+                                <td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</p></td>
+                                <td class="text-center">
+									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="View & Live Edit" data-id='.$row["id"].' id="btn_view">
+										<i class="fas fa-eye font-13"></i>
+                                    </a>
+									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
+                                        <i class="fas fa-pencil-alt font-13"></i>
+                                    </a>
+                                </td>
+                            </tr>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+	
+	// distri_target_table_view_modal -->[ main purpose is to fetch all the data of the input fields in the modal view ]
+	function getTableHTML_distri_target_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+			
+			$rHTML = $row;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+	
+	// distri_target_table_view_modal -->[ main purpose is to fetch all the data of the input fields in the modal view ]
+	function getTableHTML_name_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+	
+			$bHTML = ''; 
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+			
+			$rHTML = $row;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// distri_target_details_table_view -->[ main purpose is to fetch table data in the distri_target_details table ] 
+	// + edit live data =>[amount]
+	function getTableHTML_distributors_trade_details_table($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id, $data;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= ' <tr>
+                                <td><p>'.$counter++.'</td>
+								if('.$data.' == '.$row["target"].'){
+									<td>
+										<input type="text" name="edit_distributors[]" id="edit_distributors" value="'.$row["distri_id"].'" hidden>
+										<p>'.$row["distri_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["region_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["depot_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["area_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["territorry_name"].'</p>
+									</td>
+								
+									<td class="text-center">
+										<input style="width: 80%;" type="text" name="edit_amount[]" id="edit_amount" placeholder="Edit Amount" data-id= "'.$row['id'].'" value= "'.$row['amount'].'" >
+										<p style = "display: none;">'.$row["amount"].'</p>
+									</td>
+								}
+                            </tr>';
+			}
+			// if('.$row[""].' = '.$row["target"].'){
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		return $rHTML;
+	}
+	
+
+	// distri_target_details_table_view_search_region_name -->[ main purpose is to search region names data in the view_distri_target modal table ]
+	function getTableHTML_Distri_target_details_search_region_names_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$bHTML = '';
+			$bHTML .= '<option value="" selected disabled>-- Filter Regions --</option>';
+
+			// '."selected".'
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML = $bHTML . '<option value="'.$row['region_id'].'" onclick= '."selected".' >'.$row['region_name'].'</option>';
+			}
+			$rHTML = $bHTML;
+			
+		}
+		catch (PDOException $e)
+		{
+			$e->getMessage();
+		}
+		return $rHTML;
+	}
+
+
+	// search using region_id in view modal table
+	function getTableHTML_search_region_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= ' <tr>
+                                <td><p>'.$counter++.'</td>
+								
+									<td>
+										<input type="text" name="edit_distributors[]" id="edit_distributors" value="'.$row["distri_id"].'" hidden>
+										<p>'.$row["distri_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["region_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["depot_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["area_name"].'</p>
+									</td>
+									<td>
+										<p>'.$row["territorry_name"].'</p>
+									</td>
+								
+									<td class="text-center">
+										<input style="width: 80%;" type="text" name="edit_amount[]" id="edit_amount" placeholder="Edit Amount" data-id= "'.$row['id'].'" value= "'.$row['amount'].'" >
+										<p style = "display: none;">'.$row["amount"].'</p>
+									</td>
+								
+                            </tr>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		return $rHTML;
+
+	}
+
+	// distri_target_details_table_view_search_depot_name -->[ main purpose is to search depot names data in the view_distri_target modal table ]
+	function getTableHTML_Distri_target_details_search_depot_names_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$bHTML = '';
+			$bHTML .= '<option value="" selected disabled>-- Filter Depots --</option>';
+
+			// '."selected".'
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML = $bHTML . '<option value="'.$row['depot_id'].'" onclick= '."selected".' >'.$row['depot_name'].'</option>';
+			}
+			$rHTML = $bHTML;
+			
+		}
+		catch (PDOException $e)
+		{
+			$e->getMessage();
+		}
+		return $rHTML;
+	}
+
+	// distri_target_details_table_view_search_area_name -->[ main purpose is to search area names data in the view_distri_target modal table ]
+	function getTableHTML_Distri_target_details_search_area_names_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$bHTML = '';
+			$bHTML .= '<option value="" selected disabled>-- Filter Areas --</option>';
+
+			// '."selected".'
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML = $bHTML . '<option value="'.$row['area_id'].'" onclick= '."selected".' >'.$row['area_name'].'</option>';
+			}
+			$rHTML = $bHTML;
+			
+		}
+		catch (PDOException $e)
+		{
+			$e->getMessage();
+		}
+		return $rHTML;
+	}
+
+	// distri_target_details_table_view_search_territory_name -->[ main purpose is to search territory names data in the view_distri_target modal table ]
+	function getTableHTML_Distri_target_details_search_territory_names_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$bHTML = '';
+			$bHTML .= '<option value="" selected disabled>-- Filter Territories --</option>';
+
+			// '."selected".'
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML = $bHTML . '<option value="'.$row['territory'].'" onclick= '."selected".' >'.$row['territorry_name'].'</option>';
+			}
+			$rHTML = $bHTML;
+			
+		}
+		catch (PDOException $e)
+		{
+			$e->getMessage();
+		}
+		return $rHTML;
+	}
+
+
+	//-----------------------------------------------------------------------------------------
+	//------------------------------ Apps Table Functions start -------------------------------
+	//-----------------------------------------------------------------------------------------
+
+
+	// apps_table_view -->[ main purpose is to fetch table data in the apps table ] 
+	function getTableHTML_apps_table($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$counter = 1;
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= ' <tr>
+                                <td><p>'.$counter++.'</p></td>
+                                <td><p>'.$row["name"].'</p></td>
+                                <td><p>'.$row["display_name"].'</p></td>
+								<td><p>'.$row["link"].'</p></td>
+                                <td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</p></td>
+                                <td class="text-center">
+									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
+                                        <i class="fas fa-pencil-alt font-13"></i>
+                                    </a>
+									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="Add Functions" func-id='.$row["id"].' id="btn_add_functions">
+										<i class="align-self-center fa fa-plus icon-xs"></i>
+                                    </a>
+									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="Add Employee List" emp-id='.$row["id"].' onclick="showModal()" id="btn_add_emp3">
+										<i class="align-self-center fa fa-eye icon-xs"></i>
+                                    </a>
+                                </td>
+                            </tr>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// apps_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
+	function getTableHTML_apps_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+			$rHTML = $row;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// outlets_table_add_modal -->[ main purpose to add the distributors and display in select2 in Outlets table add modal ]
+	function getSelectedHTML_function_names($sql,$bodyOnly=1){
+        global $con, $uid, $dept_id;
+		
+		try
+		{
+			$bHTML = '';
+			$bHTML .= '<option value="" disabled> -- Select -- </option>';
+
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML = $bHTML . '<option value="'.$row['name'].'" onclick= '."selected".' >'.$row['name'].'</option>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+    }
+
+
+
+	
 	//------------------------------------------------------------------------------------------------
-	//--------------------------------------functions end --------------------------------------------
+	//-------------------------------------- functions end -------------------------------------------
 	//------------------------------------------------------------------------------------------------
 
 ?>

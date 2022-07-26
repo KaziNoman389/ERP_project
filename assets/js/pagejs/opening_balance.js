@@ -42,10 +42,10 @@
     });
 
     $("#opening_balance_table").on('change', '#edit_balance', function() {
-        // Get outlet ID
+        // Get edit ID
         var eid = $("#edit_id").val();
-        // alert(eid);
 
+        // Get current value
         var edit_balance = $(this).val();
 
         $.ajax({
