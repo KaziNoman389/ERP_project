@@ -362,7 +362,8 @@
                                         </label>
                                         <input type="text" name="add_emp_id" id="add_emp_id" />
                                         <select class="form-control select2 custom-select js-example-basic-single"
-                                            style="width: 100%; height:36px;" name="add_emp_list[]" id="add_emp_list">
+                                            style="width: 100%; height:36px;" name="add_emp_list[]" id="add_emp_list"
+                                            multiple="multiple">
 
                                         </select>
                                     </div>
@@ -374,7 +375,7 @@
                                         </label>
                                         <input type="text" name="add_app_id" id="add_app_id" />
                                         <select class="form-control select2 custom-select js-example-basic-single"
-                                            style="width: 100%; height:36px;" name="add_apps_list[]" id="add_apps_list">
+                                            style="width: 100%; height:36px;" name="add_apps_list" id="add_apps_list">
 
                                         </select>
                                     </div>
@@ -386,7 +387,7 @@
                                         <label for="add_func">
                                             <h6>Functions</h6>
                                         </label>
-                                        <!-- <input type="text" name="add_fn_id" id="add_fn_id" /> -->
+                                        <input type="text" name="add_fn_id" id="add_fn_id" />
                                         <select class="form-control select2 custom-select js-example-basic-single"
                                             style="width: 100%; height:36px;" name="add_func_list[]" id="add_func_list"
                                             multiple="multiple">
