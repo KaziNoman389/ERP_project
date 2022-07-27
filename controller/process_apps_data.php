@@ -55,7 +55,7 @@
             }
 		}
 
-		elseif($oper == 'add_func'){
+		elseif($oper == 'add_function'){
 			$add_func_id = preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['add_func_id']);
 			
 				
@@ -91,6 +91,34 @@
                 // echo $stmt->rowCount() . " records Added successfully";
             }
 		}
+
+		elseif($oper == 'add_emp'){
+			$add_app_id = preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['add_app_id']);
+			$e_list = $_POST['add_emp_list'];
+			$f_list = $_POST['add_func_list'];
+
+			$emp_arr_length = count($e_list);
+			for($i = 0; $i < $emp_arr_length; $i++) {
+				$add_emp_list =  preg_replace('/[^A-Za-z0-9. -]/', '', $e_list[$i]);
+
+				$func_arr_length = count($f_list);
+				for($j = 0; $j < $func_arr_length; $j++) {
+					$add_func_list =  preg_replace('/[^A-Za-z0-9. -]/', '', $f_list[$j]);
+
+					$query = " INSERT INTO `permissions`(`emp_id`, `app`, `func`, `is_active`, `created_by`) 
+					VALUES ('$add_emp_list','$add_app_id','$add_func_list','1','$uid') ";
+					//prepare the query
+					$stmt = $con->prepare($query);
+					// execute the query
+					$result  = $stmt->execute();
+				}
+			}
+			if($result  == 'true'){
+					echo 'true';
+					// echo $stmt->rowCount() . " records Added successfully";
+			}
+		}
+	
 	}
 
 

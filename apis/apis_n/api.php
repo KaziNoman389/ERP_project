@@ -65,6 +65,9 @@
 		case '13':  // Request for functions table
 			$table = 'functions';
 			break;
+		case '14':  // Request for permissions table
+			$table = 'permissions';
+			break;
 	}
 
 
@@ -326,7 +329,7 @@
 		// -------------------------------------------------------------------
 
 		case '43': // Request for apps list --> for table view purpose
-			$sql = " SELECT * FROM ".$table." ORDER BY apps.id ASC";
+			$sql = " SELECT * FROM ".$table." ORDER BY id ASC ";
 			$return_data = getTableHTML_apps_table($sql,true);
 			break;
 
@@ -337,9 +340,32 @@
 			break;
 			
 		case '45': // Request for functions name list --> functions table ( unique names ) --> [for table modal function add purpose]
-			$sql = " SELECT DISTINCT `name` FROM ".$table." GROUP BY name ";
+			$sql = " SELECT DISTINCT `name` FROM ".$table;
 			$return_data = getSelectedHTML_function_names($sql,true);
 			break;
+
+		// case '46': // Request for functions name list --> functions table ( unique names ) --> [for table modal function add purpose]
+		// 	$sql = " SELECT DISTINCT `name` FROM ".$table." WHERE ";
+		// 	$sql .= ($filter!='')? $filter : '';
+		// 	$return_data = getSelectedHTML_function_filter_names_SelectedID($sql,true);
+		// 	break;
+		
+		case '46': // Request for area list --> areas table (code,name) selection --> [for modal view purpose]
+			$sql = " SELECT emp_list.* FROM ".$table." WHERE is_active = 1 ";
+			$return_data = getSelectedHTML_apps_emp_list($sql,true);
+			break;
+
+		case '47': // Request for area list --> areas table (code,name) selection --> [for modal view purpose]
+			$sql = " SELECT id, display_name, is_active FROM ".$table." WHERE is_active = 1 ";
+			$return_data = getSelectedHTML_apps_list($sql,true);
+			break;
+
+		case '48': // Request for area list --> areas table (code,name) selection --> [for modal view purpose]
+			$sql = " SELECT `id`, `app`, `name` FROM ".$table." WHERE app = ".$data;
+			$return_data = getSelectedHTML_function_filter_names_SelectedID($sql,true);
+			break;
+
+
 			
 	}
 
@@ -2172,15 +2198,15 @@
 								<td><p>'.$row["link"].'</p></td>
                                 <td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</p></td>
                                 <td class="text-center">
-									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
-                                        <i class="fas fa-pencil-alt font-13"></i>
-                                    </a>
-									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="Add Functions" func-id='.$row["id"].' id="btn_add_functions">
+									<a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row["id"].' id="btn_edit">
+										<i class="fas fa-pencil-alt font-13"></i>
+									</a>
+									<a class="func btn p-0" data-toggle="tooltip" data-placement="bottom" title="App Functions" func-id='.$row["id"].' id="btn_add_func">
 										<i class="align-self-center fa fa-plus icon-xs"></i>
-                                    </a>
-									<a class="btn p-0"  data-toggle="tooltip" data-placement="bottom" title="Add Employee List" emp-id='.$row["id"].' onclick="showModal()" id="btn_add_emp3">
-										<i class="align-self-center fa fa-eye icon-xs"></i>
-                                    </a>
+									</a>
+									<a class="emp btn p-0" data-toggle="tooltip" data-placement="bottom" title="App Permissions" emp-id='.$row["id"].' id="btn_add_emp">
+										<i class="align-self-center fa fa-plus icon-xs"></i>
+									</a>
                                 </td>
                             </tr>';
 			}
@@ -2212,7 +2238,7 @@
 		return $rHTML;
 	}
 
-	// outlets_table_add_modal -->[ main purpose to add the distributors and display in select2 in Outlets table add modal ]
+	// apps_table_add_modal -->[ main purpose to add the functions (name) and display in select2 ]
 	function getSelectedHTML_function_names($sql,$bodyOnly=1){
         global $con, $uid, $dept_id;
 		
@@ -2238,9 +2264,93 @@
 		return $rHTML;
     }
 
+	// apps_table_modal_view modal -->[ main purpose to view the emp_list code, name, designation list and display in select2 ]
+	function getSelectedHTML_apps_emp_list($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		
+		try
+		{
+			$bHTML = '';
+			$bHTML .= '<option value="" disabled>-- Select --</option>';
 
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$code = $row['emp_code'];
+				$name = $row['name'];
+				$desig = $row['desig'];
+			
+				$bHTML = $bHTML . '<option value="'.$row['id'].'" onclick= '."selected".' >'.$code.' - '.$name.' ('.$desig.')</option>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// apps_table_modal_view modal -->[ main purpose to view the emp_list code, name, designation list and display in select2 ]
+	function getSelectedHTML_apps_list($sql,$bodyOnly=1){
+		global $con, $filter;
+
+		try
+		{
+			$bHTML = '';
+			$bHTML .= '<option value="" selected disabled> -- Select -- </option>';
+
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML = $bHTML . '<option value="'.$row['id'].'" onclick= '."selected".' >'.$row['display_name'].'</option>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		return $rHTML;
+	}
 
 	
+	// apps_table_add_modal -->[ main purpose to add the functions(name) for selected app id and display in select2 ]
+	function getSelectedHTML_function_filter_names_SelectedID($sql,$bodyOnly=1){
+        global $con, $uid, $dept_id, $data;
+		
+		try
+		{
+			$bHTML = '';
+			$bHTML .= '<option value="" disabled> -- Select -- </option>';
+
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				if($row['app'] == $data){
+					$bHTML = $bHTML . '<option value="'.$row['id'].'" onclick= '."selected".' >'.$row['name'].'</option>';
+				}
+				else{
+					$bHTML = $bHTML . '';
+				}
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+    }
+
 	//------------------------------------------------------------------------------------------------
 	//-------------------------------------- functions end -------------------------------------------
 	//------------------------------------------------------------------------------------------------

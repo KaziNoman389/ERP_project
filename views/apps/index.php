@@ -406,18 +406,17 @@
                                 </div>
                             </div>
                         </div>
+                    </form>
                 </div>
-                </form>
+                <!--end modal-body-->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+                <!--end modal-footer-->
             </div>
-            <!--end modal-body-->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-            </div>
-            <!--end modal-footer-->
+            <!--end modal-content-->
         </div>
-        <!--end modal-content-->
-    </div>
-    <!--end modal-dialog-->
+        <!--end modal-dialog-->
     </div>
 
 
