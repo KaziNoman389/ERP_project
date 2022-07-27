@@ -6,7 +6,9 @@
 <head>
     <meta charset="utf-8" />
     <!-- static title data -->
-    <title>AIR - <?php echo $get_title; ?></title>
+    <title>AIR - <?php echo $get_title; ?> </title>
+
+
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -143,8 +145,7 @@
     <!-- ********************************* Add Form *********************************** -->
     <!-- ****************************************************************************** -->
 
-    <div class="modal fade bd-example-modal-lg" id="create_new" aria-labelledby="myLargeModalLabel"
-        style="display: none;" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="create_new" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -279,25 +280,22 @@
     </div>
 
 
-
     <!-- ****************************************************************************** -->
     <!-- ***************************** Add Functions Form ***************************** -->
     <!-- ****************************************************************************** -->
 
-    <div class="modal fade bd-example-modal-lg" id="modal_add_func" aria-labelledby="myLargeModalLabel"
-        style="display: none;" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="modal_function" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title m-0" id="myLargeModalLabel">Add Apps Function</h6>
+                    <h6 class="modal-title m-0" id="myLargeModalLabel">Add Apps Functions</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <!--end modal-header-->
                 <div class="modal-body">
-
                     <form id="add_apps_function_form" method="POST">
                         <div class="card-body">
-
                             <div class="row">
                                 <div class="row">
                                     <!-- Functions dropdown -->
@@ -314,16 +312,17 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-md-12  mt-3">
-                                        <input type="text" name="oper" value="add_func" hidden />
+                                        <input type="text" name="oper" value="add_function" hidden />
                                         <button type="submit"
                                             class="btn btn-primary btn-square btn-outline-dashed">Save</button>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </form>
-
                 </div>
                 <!--end modal-body-->
                 <div class="modal-footer">
@@ -335,23 +334,77 @@
         </div>
         <!--end modal-dialog-->
     </div>
+
 
 
     <!-- ****************************************************************************** -->
     <!-- ***************************** Add Employee Form ***************************** -->
     <!-- ****************************************************************************** -->
-    <div class="modal fade bd-example-modal-lg" id="testModal" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+
+    <div class="modal fade bd-example-modal-lg" id="modal_emp" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title m-0" id="myLargeModalLabel">Add Apps Function</h6>
+                    <h6 class="modal-title m-0" id="myLargeModalLabel">Add Apps Employees</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <!--end modal-header-->
                 <div class="modal-body">
+                    <form id="add_apps_emp_form" method="POST">
+                        <input type="text" name="curr_id" id="curr_id" />
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="row">
+                                    <!-- Employees dropdown -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="add_emp_list">
+                                            <h6>Employees</h6>
+                                        </label>
+                                        <input type="text" name="add_emp_id" id="add_emp_id" />
+                                        <select class="form-control select2 custom-select js-example-basic-single"
+                                            style="width: 100%; height:36px;" name="add_emp_list[]" id="add_emp_list">
 
+                                        </select>
+                                    </div>
 
+                                    <!-- Apps dropdown -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="add_apps_list">
+                                            <h6>Apps</h6>
+                                        </label>
+                                        <input type="text" name="add_app_id" id="add_app_id" />
+                                        <select class="form-control select2 custom-select js-example-basic-single"
+                                            style="width: 100%; height:36px;" name="add_apps_list[]" id="add_apps_list">
 
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Functions dropdown -->
+                                    <div class="col-md-12 mb-3">
+                                        <label for="add_func">
+                                            <h6>Functions</h6>
+                                        </label>
+                                        <!-- <input type="text" name="add_fn_id" id="add_fn_id" /> -->
+                                        <select class="form-control select2 custom-select js-example-basic-single"
+                                            style="width: 100%; height:36px;" name="add_func_list[]" id="add_func_list"
+                                            multiple="multiple">
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12  mt-3">
+                                        <input type="text" name="oper" value="add_emp" hidden />
+                                        <button type="submit"
+                                            class="btn btn-primary btn-square btn-outline-dashed">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <!--end modal-body-->
                 <div class="modal-footer">
@@ -363,10 +416,6 @@
         </div>
         <!--end modal-dialog-->
     </div>
-
-
-
-
 
 
 
@@ -430,7 +479,7 @@ td p {
 }
 </style>
 
-
+<!-- Js for Select2 -->
 <script>
 $(document).ready(function() {
     $('.js-example-basic-single').select2();
