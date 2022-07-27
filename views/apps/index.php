@@ -351,43 +351,44 @@
                 <!--end modal-header-->
                 <div class="modal-body">
                     <form id="add_apps_emp_form" method="POST">
-                        <input type="text" name="curr_id" id="curr_id" />
+                        <input type="text" name="curr_id" id="curr_id" hidden />
                         <div class="card-body">
                             <div class="row">
+
                                 <div class="row">
                                     <!-- Employees dropdown -->
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-12 mb-3">
                                         <label for="add_emp_list">
                                             <h6>Employees</h6>
                                         </label>
-                                        <input type="text" name="add_emp_id" id="add_emp_id" />
+                                        <input type="text" name="add_emp_id" id="add_emp_id" hidden />
                                         <select class="form-control select2 custom-select js-example-basic-single"
                                             style="width: 100%; height:36px;" name="add_emp_list[]" id="add_emp_list"
                                             multiple="multiple">
 
                                         </select>
                                     </div>
+                                </div>
 
+                                <div class="row">
                                     <!-- Apps dropdown -->
                                     <div class="col-md-6 mb-3">
                                         <label for="add_apps_list">
                                             <h6>Apps</h6>
                                         </label>
-                                        <input type="text" name="add_app_id" id="add_app_id" />
+                                        <input type="text" name="add_app_id" id="add_app_id" hidden />
                                         <select class="form-control select2 custom-select js-example-basic-single"
                                             style="width: 100%; height:36px;" name="add_apps_list" id="add_apps_list">
 
                                         </select>
                                     </div>
-                                </div>
 
-                                <div class="row">
                                     <!-- Functions dropdown -->
-                                    <div class="col-md-12 mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label for="add_func">
                                             <h6>Functions</h6>
                                         </label>
-                                        <input type="text" name="add_fn_id" id="add_fn_id" />
+                                        <input type="text" name="add_fn_id" id="add_fn_id" hidden />
                                         <select class="form-control select2 custom-select js-example-basic-single"
                                             style="width: 100%; height:36px;" name="add_func_list[]" id="add_func_list"
                                             multiple="multiple">
@@ -395,27 +396,28 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="row">
-                                    <div class="col-md-12  mt-3">
-                                        <input type="text" name="oper" value="add_emp" hidden />
-                                        <button type="submit"
-                                            class="btn btn-primary btn-square btn-outline-dashed">Save</button>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12  mt-3">
+                                    <input type="text" name="oper" value="add_emp" hidden />
+                                    <button type="submit"
+                                        class="btn btn-primary btn-square btn-outline-dashed">Save</button>
                                 </div>
                             </div>
                         </div>
-                    </form>
                 </div>
-                <!--end modal-body-->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
-                <!--end modal-footer-->
+                </form>
             </div>
-            <!--end modal-content-->
+            <!--end modal-body-->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+            <!--end modal-footer-->
         </div>
-        <!--end modal-dialog-->
+        <!--end modal-content-->
+    </div>
+    <!--end modal-dialog-->
     </div>
 
 
@@ -477,6 +479,11 @@ td p {
 
 .select2-container--default .select2-selection--single {
     height: 33.5px !important;
+}
+
+.select2-selection__rendered,
+.select2-selection__choice {
+    font-size: 11px;
 }
 </style>
 
