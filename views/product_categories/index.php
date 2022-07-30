@@ -62,7 +62,7 @@
                                         <button class="btn btn-secondary" type="button" id="button-addon1"><i
                                                 class="fas fa-search"></i></button>
                                         <input autocomplete="off" type="text" class="form-control search" name="search"
-                                            id="search_input" placeholder="Search Depots">
+                                            id="search_input" placeholder="Search Product Categories">
                                         <select name="search_category" id="search_select">
                                             <option value="">
                                                 -- Choose category --
@@ -111,13 +111,12 @@
                                     <tr>
                                         <th style="width: 5%;">#</th>
                                         <th style="width: 15%;">Name</th>
-                                        <th style="width: 25%;">Display Name</th>
-                                        <th style="width: 25%;">Link</th>
+                                        <th style="width: 25%;">Sub-Category</th>
                                         <th style="width: 10%;">Status</th>
                                         <th class="text-end" style="width: 5%;">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="apps_table">
+                                <tbody id="product_categories_table">
 
                                 </tbody>
                             </table>
@@ -149,173 +148,49 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title m-0" id="myLargeModalLabel">Create Apps</h6>
+                    <h6 class="modal-title m-0" id="myLargeModalLabel">Create Product Categories</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <!--end modal-header-->
                 <div class="modal-body">
-
-                    <form id="add_apps_form" method="POST">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 mt-3">
-                                    <label>Name</label>
-                                    <input type="text" class="form-control" id="add_name" name="add_name"
-                                        placeholder="Name" maxlength="100" required>
-                                </div>
-                                <div class="col-md-6  mt-3">
-                                    <label>Display Name</label>
-                                    <input type="text" class="form-control" id="add_d_name" name="add_d_name"
-                                        placeholder="Display Name" required></input>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 mt-3">
-                                    <label>Link</label>
-                                    <input type="text" class="form-control" id="add_link" name="add_link"
-                                        placeholder="Link" required></input>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <!-- status dropdown -->
-                                <div class="col-md-6 mt-3">
-                                    <label>Status</label>
-                                    <select name="add_status" id="add_status" class="form-control">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12  mt-3">
-                                    <input type="text" name="oper" value="add" hidden />
-                                    <button type="submit"
-                                        class="btn btn-primary btn-square btn-outline-dashed">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-                <!--end modal-body-->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
-                <!--end modal-footer-->
-            </div>
-            <!--end modal-content-->
-        </div>
-        <!--end modal-dialog-->
-    </div>
-
-
-    <!-- ****************************************************************************** -->
-    <!-- ********************************* Edit Form *********************************** -->
-    <!-- ****************************************************************************** -->
-
-    <div class="modal fade bd-example-modal-lg" id="modal_edit" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title m-0" id="myLargeModalLabel">Edit Apps</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <!--end modal-header-->
-                <div class="modal-body">
-
-                    <form id="edit_apps_form" method="POST">
-                        <div class="card-body">
-                            <div class="row">
-                                <input type="text" name="edit_id" id="edit_id" hidden />
-                                <div class="col-md-6 mt-3">
-                                    <label>Name</label>
-                                    <input type="text" class="form-control" id="edit_name" name="edit_name"
-                                        placeholder="Name" maxlength="100" required>
-                                </div>
-                                <div class="col-md-6  mt-3">
-                                    <label>Display Name</label>
-                                    <input type="text" class="form-control" id="edit_d_name" name="edit_d_name"
-                                        placeholder="Display Name" required></input>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 mt-3">
-                                    <label>Link</label>
-                                    <input type="text" class="form-control" id="edit_link" name="edit_link"
-                                        placeholder="Link" required></input>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <!-- status dropdown -->
-                                <div class="col-md-6 mt-3">
-                                    <label>Status</label>
-                                    <select name="edit_status" id="edit_status" class="form-control">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12  mt-3">
-                                    <input type="text" name="oper" value="edit" hidden />
-                                    <button type="submit" class="btn btn-primary btn-square btn-outline-dashed"
-                                        id="edit_apps">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-                <!--end modal-body-->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
-                <!--end modal-footer-->
-            </div>
-            <!--end modal-content-->
-        </div>
-        <!--end modal-dialog-->
-    </div>
-
-
-    <!-- ****************************************************************************** -->
-    <!-- ***************************** Add Functions Form ***************************** -->
-    <!-- ****************************************************************************** -->
-
-    <div class="modal fade bd-example-modal-lg" id="modal_function" aria-labelledby="myLargeModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title m-0" id="myLargeModalLabel">Add Apps Functions</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <!--end modal-header-->
-                <div class="modal-body">
-                    <form id="add_apps_function_form" method="POST">
+                    <form id="add_product_categories_form" method="POST">
                         <div class="card-body">
                             <div class="row">
                                 <div class="row">
-                                    <!-- Functions dropdown -->
-                                    <div class="col-md-12 mb-3">
-                                        <label for="add_func">
-                                            <h6>Functions</h6>
+                                    <!-- Product Name dropdown -->
+                                    <div class="col-md-6 mb-3">
+                                        <h6>Name</h6>
+                                        <input class="form-control" type="text" name="add_name" id="add_name" />
+                                    </div>
+
+                                    <!-- Main Product Category dropdown -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="add_sub_of_list">
+                                            <h6>Main Category</h6>
                                         </label>
 
-                                        <input type="text" name="add_func_id" id="add_func_id" hidden />
+                                        <input type="text" name="m_cat_id" id="m_cat_id" hidden />
                                         <select class="form-control select2 custom-select js-example-basic-single"
-                                            style="width: 100%; height:36px;" name="add_func[]" id="add_func"
-                                            placeholder="" multiple="multiple">
+                                            style="width: 100%; height:36px;" name="add_sub_of_list"
+                                            id="add_sub_of_list">
+                                        </select>
+                                    </div>
+                                </div>
 
+                                <div class="row">
+                                    <!-- status dropdown -->
+                                    <div class="col-md-6 mt-3">
+                                        <label>Status</label>
+                                        <select name="add_status" id="add_status" class="form-control">
+                                            <option value="1">Active</option>
+                                            <option value="0">In Active</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-12  mt-3">
-                                        <input type="text" name="oper" value="add_function" hidden />
+                                        <input type="text" name="oper" value="add" hidden />
                                         <button type="submit"
                                             class="btn btn-primary btn-square btn-outline-dashed">Save</button>
                                     </div>
@@ -338,88 +213,72 @@
 
 
     <!-- ****************************************************************************** -->
-    <!-- ***************************** Add Employee Form ***************************** -->
+    <!-- ********************************* Edit Form ********************************** -->
     <!-- ****************************************************************************** -->
 
-    <div class="modal fade bd-example-modal-lg" id="modal_emp" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="modal_edit" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title m-0" id="myLargeModalLabel">Add Apps Employees</h6>
+                    <h6 class="modal-title m-0" id="myLargeModalLabel">Edit Product Categories</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <!--end modal-header-->
                 <div class="modal-body">
-                    <form id="add_apps_emp_form" method="POST">
-                        <input type="text" name="curr_id" id="curr_id" hidden />
+                    <form id="edit_product_categories_form" method="POST">
                         <div class="card-body">
                             <div class="row">
-
                                 <div class="row">
-                                    <!-- Employees dropdown -->
-                                    <div class="col-md-12 mb-3">
-                                        <label for="add_emp_list">
-                                            <h6>Employees</h6>
-                                        </label>
-                                        <input type="text" name="add_emp_id" id="add_emp_id" hidden />
-                                        <select class="form-control select2 custom-select js-example-basic-single"
-                                            style="width: 100%; height:36px;" name="add_emp_list[]" id="add_emp_list"
-                                            multiple="multiple">
+                                    <input type="text" name="edit_id" id="edit_id" hidden />
 
+                                    <!-- Product Name dropdown -->
+                                    <div class="col-md-6 mb-3">
+                                        <h6>Name</h6>
+                                        <input class="form-control" type="text" name="edit_name" id="edit_name" />
+                                    </div>
+
+                                    <!-- Main Product Category dropdown -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="edit_sub_of_list">
+                                            <h6>Main Category</h6>
+                                        </label>
+
+                                        <input type="text" name="m_cat_id" id="m_cat_id" hidden />
+                                        <select class="form-control select2 custom-select js-example-basic-single"
+                                            style="width: 100%; height:36px;" name="edit_sub_of_list"
+                                            id="edit_sub_of_list">
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <!-- Apps dropdown -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="add_apps_list">
-                                            <h6>Apps</h6>
-                                        </label>
-                                        <input type="text" name="add_app_id" id="add_app_id" hidden />
-                                        <select class="form-control select2 custom-select js-example-basic-single"
-                                            style="width: 100%; height:36px;" name="add_apps_list" id="add_apps_list">
-
-                                        </select>
-                                    </div>
-
-                                    <!-- Functions dropdown -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="add_func">
-                                            <h6>Functions</h6>
-                                        </label>
-                                        <input type="text" name="add_fn_id" id="add_fn_id" hidden />
-                                        <select class="form-control select2 custom-select js-example-basic-single"
-                                            style="width: 100%; height:36px;" name="add_func_list[]" id="add_func_list"
-                                            multiple="multiple">
-
+                                    <!-- status dropdown -->
+                                    <div class="col-md-6 mt-3">
+                                        <label>Status</label>
+                                        <select name="edit_status" id="edit_status" class="form-control">
+                                            <option value="1">Active</option>
+                                            <option value="0">In Active</option>
                                         </select>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-12  mt-3">
-                                    <input type="text" name="oper" value="add_emp" hidden />
-                                    <button type="submit"
-                                        class="btn btn-primary btn-square btn-outline-dashed">Save</button>
+                                <div class="row">
+                                    <div class="col-md-12  mt-3">
+                                        <input type="text" name="oper" value="edit" hidden />
+                                        <button type="submit"
+                                            class="btn btn-primary btn-square btn-outline-dashed">Save</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <!--end modal-body-->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                 </div>
-                <!--end modal-footer-->
             </div>
-            <!--end modal-content-->
         </div>
-        <!--end modal-dialog-->
     </div>
-
-
 
     <!-- jQuery  -->
     <script src="../../assets/js/jquery.min.js"></script>
@@ -444,7 +303,7 @@
     <!-- App js -->
     <script src="../../assets/js/app.js"></script>
     <script src="../../plugins/sweet-alert2/sweetalert2.min.js"></script>
-    <script src="../../assets/js/pagejs/apps.js"></script>
+    <script src="../../assets/js/pagejs/product_categories.js"></script>
 
 </body>
 

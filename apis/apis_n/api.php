@@ -68,6 +68,9 @@
 		case '14':  // Request for permissions table
 			$table = 'permissions';
 			break;
+		case '15':  // Request for productcategories table
+			$table = 'productcategories';
+			break;
 	}
 
 
@@ -343,12 +346,6 @@
 			$sql = " SELECT DISTINCT `name` FROM ".$table;
 			$return_data = getSelectedHTML_function_names($sql,true);
 			break;
-
-		// case '46': // Request for functions name list --> functions table ( unique names ) --> [for table modal function add purpose]
-		// 	$sql = " SELECT DISTINCT `name` FROM ".$table." WHERE ";
-		// 	$sql .= ($filter!='')? $filter : '';
-		// 	$return_data = getSelectedHTML_function_filter_names_SelectedID($sql,true);
-		// 	break;
 		
 		case '46': // Request for area list --> areas table (code,name) selection --> [for modal view purpose]
 			$sql = " SELECT emp_list.* FROM ".$table." WHERE is_active = 1 ";
@@ -366,6 +363,39 @@
 			break;
 
 
+		// -------------------------------------------------------------------
+		// ------------- ALL Cases for Product Categories TABLE --------------
+		// -------------------------------------------------------------------
+
+		case '49': // Request for product_categories list --> product_categories for table view purpose
+			$sql = " SELECT * FROM ".$table." WHERE org_id = ".$org_id." AND sub_of !=0 ";
+			$return_data = getSelectedHTML_product_categories_table($sql,true);
+			break;
+			
+		case '50': // Request for main product_categories list --> product_categories modal add purpose
+			$sql = " SELECT `id`,`name` FROM ".$table." WHERE `sub_of`= 0 AND org_id = ".$org_id." ";
+			$return_data = getSelectedHTML_main_product_names($sql,true);
+			break;
+
+		// case '51': // Request for sub product_categories list --> product_categories modal add purpose
+		// 	$sql = " SELECT `id`,`name` FROM ".$table." WHERE `sub_of`!=0 AND org_id = ".$org_id." GROUP BY `name` ";
+		// 	$return_data = getSelectedHTML_sub_cat_product_names($sql,true);
+		// 	break;
+
+		case '52': // product_categories fetch from productcategories for edit
+			$sql = " SELECT * FROM ".$table." WHERE id = ".$data;
+			$return_data = getTableHTML_product_catergoties_SelectedID($sql,true);
+			break;
+			
+		case '53': // product_categories select2 from productcategories for modal edit
+			$sql = " SELECT * FROM ".$table." WHERE sub_of!=0 AND id = ".$data;
+			$return_data = getSelectedHTML_product_names_edit_selectedID($sql,true);
+			break;
+
+		case '54': // product_categories search from productcategories view modal table
+			$sql = " SELECT sub_of FROM ".$table." WHERE sub_of!=0 AND org_id = ".$org_id." GROUP BY sub_of";
+			$return_data = getSelectedHTML_product_names_main_names($sql,true);
+			break;
 			
 	}
 
@@ -2351,6 +2381,158 @@
 		return $rHTML;
     }
 
+	
+	//-----------------------------------------------------------------------------------------
+	//------------------------------ Product Category Table Functions start -------------------------------
+	//-----------------------------------------------------------------------------------------
+	
+	// product_categories_table_view -->[ main purpose is to fetch table data in the product_categories table ] 
+	function getSelectedHTML_product_categories_table($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id, $org_id;
+		try
+		{
+			$bHTML = '';
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			$counter = 1;
+			// <td><p>'.$rw["name"].'</p></td>
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$bHTML .= '<tr>
+							<td><p>'.$counter++.'</p></td>
+							<td><p>'.$row["name"].'</p></td>
+							<td id="main_name"><p></td>
+							<td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</p></td>
+							<td class="text-center">
+								<a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row['id'].' id="btn_edit">
+									<i class="fas fa-pencil-alt font-13"></i>
+								</a>
+							</td>
+                        </tr>';
+				
+			}
+			
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// apps_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
+	function getSelectedHTML_main_product_names($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		
+		try
+		{
+			$bHTML = '';
+			$bHTML .= '<option value="0" selected>-- Select --</option>';
+
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$name = $row['name'];
+				$bHTML = $bHTML . '<option value="'.$row['id'].'" onclick= '."selected".' >'.$name.'</option>';
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	// apps_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
+	function getTableHTML_product_catergoties_SelectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id;
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+			$rHTML = $row;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+	
+	// apps_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
+	function getSelectedHTML_product_names_edit_selectedID($sql,$bodyOnly=1){
+		global $con, $uid, $dept_id, $org_id;
+		
+		try
+		{
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+
+			$bHTML = '';
+			$bHTML .= '<option value="" disabled>-- Select --</option>';
+
+			$sql = " SELECT `id`, `name`, `sub_of`, `org_id` FROM productcategories WHERE `sub_of`= 0 AND `org_id`=".$org_id." ";
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			$r = $stmt->fetchAll();
+
+			foreach($r as $rows){
+				if($row['sub_of'] === $rows['id']) {
+					$bHTML = $bHTML . '<option value="'.$rows['id'].'" selected >'.$rows['name'].'</option>';
+				}
+				else{
+					$bHTML = $bHTML . '<option value="'.$rows['id'].'" >'.$rows['name'].'</option>';
+				}
+			}
+			$rHTML = $bHTML;
+		}
+		catch (PDOException $e) 
+		{
+			$rHTML = $e->getMessage();
+		}
+		
+		return $rHTML;
+	}
+
+	function getSelectedHTML_product_names_main_names($sql,$bodyOnly=1){
+		global $con, $org_id;
+
+		$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+		$stmt->execute();
+
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT))
+		{
+			$sub = $row['sub_of'];
+			// $sub_of_arr = array($sub);
+			// print_r($sub_of_arr);
+
+			$sql = " SELECT `id`,`name` FROM productcategories WHERE sub_of=0 AND org_id = ".$org_id." ";
+			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+			$stmt->execute();
+			while ($r = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT))
+			{
+				$id = $r['id'];
+				// if(in_array($id,$sub_of_arr)){
+					if($id == $sub){
+						$n = $r['name'];
+					}
+				// }
+			}
+			return ['n'=>$n];
+		}
+		
+	}
 	//------------------------------------------------------------------------------------------------
 	//-------------------------------------- functions end -------------------------------------------
 	//------------------------------------------------------------------------------------------------
