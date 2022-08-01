@@ -366,11 +366,12 @@
 		// -------------------------------------------------------------------
 		// ------------- ALL Cases for Product Categories TABLE --------------
 		// -------------------------------------------------------------------
-
-		case '49': // Request for product_categories list --> product_categories for table view purpose
-			$sql = " SELECT * FROM ".$table." WHERE org_id = ".$org_id." AND sub_of !=0 ";
+		
+		case '49': // Request for area list --> areas table (code,name) selection --> [for modal view purpose]
+			$sql = " SELECT * FROM ".$table." WHERE org_id = ".$org_id;
 			$return_data = getSelectedHTML_product_categories_table($sql,true);
 			break;
+			
 			
 		case '50': // Request for main product_categories list --> product_categories modal add purpose
 			$sql = " SELECT `id`,`name` FROM ".$table." WHERE `sub_of`= 0 AND org_id = ".$org_id." ";
@@ -393,7 +394,7 @@
 			break;
 
 		case '54': // product_categories search from productcategories view modal table
-			$sql = " SELECT sub_of FROM ".$table." WHERE sub_of!=0 AND org_id = ".$org_id." GROUP BY sub_of";
+			$sql = "SELECT `id`,`name`,`sub_of` FROM productcategories WHERE org_id = 2 ";
 			$return_data = getSelectedHTML_product_names_main_names($sql,true);
 			break;
 			
@@ -2389,21 +2390,31 @@
 	// product_categories_table_view -->[ main purpose is to fetch table data in the product_categories table ] 
 	function getSelectedHTML_product_categories_table($sql,$bodyOnly=1){
 		global $con, $uid, $dept_id, $org_id;
-		try
-		{
 			$bHTML = '';
 			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$stmt->execute();
-
+			
 			$counter = 1;
-			// <td><p>'.$rw["name"].'</p></td>
-
 			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
 			{
+				$sub_of = $row['sub_of'];
+
+				$query = "SELECT * FROM productcategories WHERE id = $sub_of AND org_id = ".$org_id;
+				$stmt_1 = $con->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$stmt_1->execute();
+				$row_1 = $stmt_1->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+
+				if($sub_of == '0'){
+					$name = " --- ";
+				}
+				else {
+					$name = $row_1["name"];		
+				}
+				
 				$bHTML .= '<tr>
 							<td><p>'.$counter++.'</p></td>
 							<td><p>'.$row["name"].'</p></td>
-							<td id="main_name"><p></td>
+							<td><p>'.$name.'</p></td>
 							<td><p>'.($row["is_active"]==0 ? "Out Of Service" : "Active").'</p></td>
 							<td class="text-center">
 								<a class="btn p-0" data-toggle="tooltip" data-placement="bottom" title="Edit" data-id='.$row['id'].' id="btn_edit">
@@ -2411,17 +2422,8 @@
 								</a>
 							</td>
                         </tr>';
-				
-			}
-			
-			$rHTML = $bHTML;
 		}
-		catch (PDOException $e) 
-		{
-			$rHTML = $e->getMessage();
-		}
-		
-		return $rHTML;
+		return $bHTML;
 	}
 
 	// apps_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
@@ -2477,22 +2479,24 @@
 		{
 			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 			$stmt->execute();
-			$row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
 
 			$bHTML = '';
-			$bHTML .= '<option value="" disabled>-- Select --</option>';
+			$bHTML .= '<option value="0" selected></option>';
 
-			$sql = " SELECT `id`, `name`, `sub_of`, `org_id` FROM productcategories WHERE `sub_of`= 0 AND `org_id`=".$org_id." ";
-			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$stmt->execute();
-			$r = $stmt->fetchAll();
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) 
+			{
+				$sub_of = $row['sub_of'];
 
-			foreach($r as $rows){
-				if($row['sub_of'] === $rows['id']) {
-					$bHTML = $bHTML . '<option value="'.$rows['id'].'" selected >'.$rows['name'].'</option>';
-				}
-				else{
-					$bHTML = $bHTML . '<option value="'.$rows['id'].'" >'.$rows['name'].'</option>';
+				$query = "SELECT * FROM productcategories WHERE sub_of = 0 AND org_id = ".$org_id;
+				$stmt_1 = $con->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$stmt_1->execute();
+				while($row_1 = $stmt_1->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)){
+					if($sub_of == $row_1['id']) {
+						$bHTML = $bHTML . '<option value="'.$row_1['id'].'" selected >'.$row_1['name'].'</option>';
+					}
+					else{
+						$bHTML = $bHTML . '<option value="'.$row_1['id'].'" >'.$row_1['name'].'</option>';
+					}
 				}
 			}
 			$rHTML = $bHTML;
@@ -2511,28 +2515,27 @@
 		$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 		$stmt->execute();
 
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT))
-		{
-			$sub = $row['sub_of'];
-			// $sub_of_arr = array($sub);
-			// print_r($sub_of_arr);
+		// $sub_of = ''; $m_cat = '';
+		while($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)){
+			$sub_of = $row['sub_of'];
 
-			$sql = " SELECT `id`,`name` FROM productcategories WHERE sub_of=0 AND org_id = ".$org_id." ";
-			$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-			$stmt->execute();
-			while ($r = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT))
-			{
-				$id = $r['id'];
-				// if(in_array($id,$sub_of_arr)){
-					if($id == $sub){
-						$n = $r['name'];
-					}
-				// }
+			if($row['sub_of'] == 0){
+				$m_cat = " ---- ";
 			}
-			return ['n'=>$n];
+			else{
+				$sql = " SELECT * FROM productcategories WHERE sub_of=$sub_of AND org_id = ".$org_id." ";
+				$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+				$stmt->execute();
+				
+				while($rw = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)){
+					$name = $rw['name'];
+
+				}
+			}
 		}
-		
+		return [$name];
 	}
+	
 	//------------------------------------------------------------------------------------------------
 	//-------------------------------------- functions end -------------------------------------------
 	//------------------------------------------------------------------------------------------------

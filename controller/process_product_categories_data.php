@@ -48,15 +48,26 @@
 			$edit_id = $_POST['edit_id'];
             
 			$edit_name =  preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['edit_name']);
-            $edit_sub_of_list =  preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['edit_sub_of_list']);
             $edit_status= preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['edit_status']);
 
-			$query = "UPDATE `productcategories` SET 
+            if($_POST['edit_sub_of_list'] != null){
+                $edit_sub_of_list =  preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['edit_sub_of_list']);
+
+                $query = "UPDATE `productcategories` SET 
                 `name`='$edit_name',`sub_of`='$edit_sub_of_list',`is_active`='$edit_status' WHERE `id` = '$edit_id' ";
-		    // prepare the query
-            $stmt = $con->prepare($query);
-            // execute the query
-            $result  = $stmt->execute();
+                // prepare the query
+                $stmt = $con->prepare($query);
+                // execute the query
+                $result  = $stmt->execute();
+            }
+            else{
+                $query = "UPDATE `productcategories` SET 
+                `name`='$edit_name', `sub_of`= '$edit_sub_of_list', `is_active`='$edit_status' WHERE `id` = '$edit_id' ";
+                // prepare the query
+                $stmt = $con->prepare($query);
+                // execute the query
+                $result  = $stmt->execute();
+            }
 
             if($result  == 'true'){
                 echo 'true';

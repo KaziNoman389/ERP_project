@@ -109,11 +109,11 @@
                             <table class="table table-striped table-bordered mb-0">
                                 <thead style="border: 1px solid #eaf0f9;background: #ebebeb; line-height:0.8;">
                                     <tr>
-                                        <th style="width: 5%;">#</th>
-                                        <th style="width: 15%;">Name</th>
-                                        <th style="width: 25%;">Sub-Category</th>
+                                        <th style="width: 3%;">#</th>
+                                        <th style="width: 47%;">Name</th>
+                                        <th style="width: 35%;">Category</th>
                                         <th style="width: 10%;">Status</th>
-                                        <th class="text-end" style="width: 5%;">Action</th>
+                                        <th class="text-center" style="width: 5%;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="product_categories_table">
@@ -243,7 +243,7 @@
                                             <h6>Main Category</h6>
                                         </label>
 
-                                        <input type="text" name="m_cat_id" id="m_cat_id" hidden />
+                                        <input type="text" name="edit_m_cat_id" id="edit_m_cat_id" hidden />
                                         <select class="form-control select2 custom-select js-example-basic-single"
                                             style="width: 100%; height:36px;" name="edit_sub_of_list"
                                             id="edit_sub_of_list">

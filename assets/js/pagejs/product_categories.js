@@ -12,16 +12,6 @@
         dataType: "json",
         success: function(result) {
             $("#product_categories_table").html(result);
-
-            $.ajax({
-                url: "../../apis/apis_n/api.php",
-                type: "post",
-                data: { 'req': '15', 'param': '54' },
-                dataType: "json",
-                success: function(result) {
-                    $("#product_categories_table tr #main_name").html(result.n);
-                }
-            });
         }
     });
     
@@ -142,10 +132,10 @@
 
                 // JUST TO CHECK ID
                 // Function changing from list
-                $("#add_sub_of_list").on('change', function() {
+                $("#edit_sub_of_list").on('change', function() {
                     var m_cat_id = $(this).val();
                     //get current emp id 
-                    $("#m_cat_id").val(m_cat_id);
+                    $("#edit_m_cat_id").val(m_cat_id);
                 });
             }
         });
@@ -185,7 +175,9 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+
                         }
+                        // $("#edit_product_categories_form")[0].reset();
                     }
                 });
             }
