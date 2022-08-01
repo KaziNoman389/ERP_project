@@ -68,9 +68,8 @@
                                                 -- Choose category --
                                             </option>
                                             <option value="1">Name</option>
-                                            <option value="2">Display Name</option>
-                                            <option value="3">Link</option>
-                                            <option value="4">Status</option>
+                                            <option value="2">Category</option>
+                                            <option value="3">Status</option>
                                         </select>
                                     </div>
                                 </div>

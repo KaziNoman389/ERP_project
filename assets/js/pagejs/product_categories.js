@@ -114,7 +114,7 @@
         $.ajax({
             url: "../../apis/apis_n/api.php",
             type: "post",
-            data: { 'req': '15', 'param': '52', 'data': e_id },
+            data: { 'req': '15', 'param': '51', 'data': e_id },
             dataType: "json",
             success: function(result) {
                 $("#edit_name").val(result['name']);
@@ -125,7 +125,7 @@
         $.ajax({
             url: "../../apis/apis_n/api.php",
             type: "post",
-            data: { 'req': '15', 'param': '53', 'data': e_id },
+            data: { 'req': '15', 'param': '52', 'data': e_id },
             dataType: "json",
             success: function(result) {
                 $("#edit_sub_of_list").html(result);
@@ -177,7 +177,6 @@
                             })
 
                         }
-                        // $("#edit_product_categories_form")[0].reset();
                     }
                 });
             }

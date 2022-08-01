@@ -372,30 +372,19 @@
 			$return_data = getSelectedHTML_product_categories_table($sql,true);
 			break;
 			
-			
 		case '50': // Request for main product_categories list --> product_categories modal add purpose
-			$sql = " SELECT `id`,`name` FROM ".$table." WHERE `sub_of`= 0 AND org_id = ".$org_id." ";
-			$return_data = getSelectedHTML_main_product_names($sql,true);
+			$sql = " SELECT `id`,`name` FROM ".$table." WHERE `sub_of`= 0 AND org_id = ".$org_id;
+			$return_data = getSelectedHTML_main_product_names_add($sql,true);
 			break;
 
-		// case '51': // Request for sub product_categories list --> product_categories modal add purpose
-		// 	$sql = " SELECT `id`,`name` FROM ".$table." WHERE `sub_of`!=0 AND org_id = ".$org_id." GROUP BY `name` ";
-		// 	$return_data = getSelectedHTML_sub_cat_product_names($sql,true);
-		// 	break;
-
-		case '52': // product_categories fetch from productcategories for edit
+		case '51': // product_categories fetch from productcategories for edit
 			$sql = " SELECT * FROM ".$table." WHERE id = ".$data;
 			$return_data = getTableHTML_product_catergoties_SelectedID($sql,true);
 			break;
 			
-		case '53': // product_categories select2 from productcategories for modal edit
+		case '52': // product_categories select2 from productcategories for modal edit
 			$sql = " SELECT * FROM ".$table." WHERE sub_of!=0 AND id = ".$data;
 			$return_data = getSelectedHTML_product_names_edit_selectedID($sql,true);
-			break;
-
-		case '54': // product_categories search from productcategories view modal table
-			$sql = "SELECT `id`,`name`,`sub_of` FROM productcategories WHERE org_id = 2 ";
-			$return_data = getSelectedHTML_product_names_main_names($sql,true);
 			break;
 			
 	}
@@ -2427,7 +2416,7 @@
 	}
 
 	// apps_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
-	function getSelectedHTML_main_product_names($sql,$bodyOnly=1){
+	function getSelectedHTML_main_product_names_add($sql,$bodyOnly=1){
 		global $con, $uid, $dept_id;
 		
 		try
