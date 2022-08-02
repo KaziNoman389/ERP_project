@@ -384,7 +384,7 @@
 			
 		case '52': // product_categories select2 from productcategories for modal edit
 			$sql = " SELECT * FROM ".$table." WHERE sub_of!=0 AND id = ".$data;
-			$return_data = getSelectedHTML_product_names_edit_selectedID($sql,true);
+			$return_data = getSelectedHTML_main_product_names_edit_selectedID($sql,true);
 			break;
 			
 	}
@@ -2461,7 +2461,7 @@
 	}
 	
 	// apps_table_modal_edit_view -->[ main purpose is to fetch all the data of the input fields in the modal edit ]
-	function getSelectedHTML_product_names_edit_selectedID($sql,$bodyOnly=1){
+	function getSelectedHTML_main_product_names_edit_selectedID($sql,$bodyOnly=1){
 		global $con, $uid, $dept_id, $org_id;
 		
 		try
@@ -2476,7 +2476,7 @@
 			{
 				$sub_of = $row['sub_of'];
 
-				$query = "SELECT * FROM productcategories WHERE sub_of = 0 AND org_id = ".$org_id;
+				$query = "SELECT * FROM productcategories WHERE sub_of = 0 AND  is_active = 1 AND  org_id = ".$org_id;
 				$stmt_1 = $con->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
 				$stmt_1->execute();
 				while($row_1 = $stmt_1->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)){
@@ -2496,33 +2496,6 @@
 		}
 		
 		return $rHTML;
-	}
-
-	function getSelectedHTML_product_names_main_names($sql,$bodyOnly=1){
-		global $con, $org_id;
-
-		$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-		$stmt->execute();
-
-		// $sub_of = ''; $m_cat = '';
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)){
-			$sub_of = $row['sub_of'];
-
-			if($row['sub_of'] == 0){
-				$m_cat = " ---- ";
-			}
-			else{
-				$sql = " SELECT * FROM productcategories WHERE sub_of=$sub_of AND org_id = ".$org_id." ";
-				$stmt = $con->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-				$stmt->execute();
-				
-				while($rw = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)){
-					$name = $rw['name'];
-
-				}
-			}
-		}
-		return [$name];
 	}
 	
 	//------------------------------------------------------------------------------------------------

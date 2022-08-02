@@ -50,7 +50,7 @@
 			$edit_name =  preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['edit_name']);
             $edit_status= preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['edit_status']);
 
-            if($_POST['edit_sub_of_list'] != null){
+            if(!empty($_POST['edit_sub_of_list'])){
                 $edit_sub_of_list =  preg_replace('/[^A-Za-z0-9. -]/', '',$_POST['edit_sub_of_list']);
 
                 $query = "UPDATE `productcategories` SET 
