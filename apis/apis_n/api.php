@@ -189,7 +189,7 @@
             break;
 
 		case '19': // Request for routes list --> areas & routes table (code,name) selection --> [for modal add purpose]
-			$sql = " SELECT distributors.* FROM ".$table." WHERE id = ".$data." AND is_active = 1 ";
+			$sql = " SELECT distributors.* FROM ".$table." WHERE id = ".$data." ";
 			$return_data = getSelectedHTML_dist_edit_routes_list($sql,true);
 			break;
 

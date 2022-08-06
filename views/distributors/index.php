@@ -1288,7 +1288,6 @@
                                                     style="height: 30px!important;">
                                                     <option value="1">Active</option>
                                                     <option value="0">In Active</option>
-                                                    <option value="-1">Closed</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mt-3">
@@ -2309,7 +2308,6 @@
                                                     style="height: 30px!important;">
                                                     <option value="1">Active</option>
                                                     <option value="0">In Active</option>
-                                                    <option value="-1">Closed</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mt-3 pe-0">

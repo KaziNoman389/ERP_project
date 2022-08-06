@@ -213,8 +213,9 @@
                 $("#edit_business_contact_1").val(result['business_contact_1']);
                 $('#edit_business_contact_2').val(result['business_contact_2']);
 
-                $("#edit_approved > [value=" + result['is_approved'] + "]").attr("selected", "true");
-                $("#edit_approved").trigger("change");
+                $("#edit_approved").val(result['is_approved']);
+                // $("#edit_approved > [value=" + result['is_approved'] + "]").attr("selected", "true");
+                // $("#edit_approved").trigger("change");
 
                 $("#edit_status").val(result['is_active']);
 
