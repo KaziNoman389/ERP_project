@@ -165,8 +165,9 @@
                 $("#edit_name").val(result['name']);
                 $("#edit_defination").val(result['definition']);
 
-                $("#edit_status > [value=" + result['is_active'] + "]").attr("selected", "true");
-                $("#edit_status").trigger("change");
+                $("#edit_status").val(result['is_active']);
+                // $("#edit_status > [value=" + result['is_active'] + "]").attr("selected", "true");
+                // $("#edit_status").trigger("change");
 
                 // GET region id from territories table(using sub queries)
                 var r_id = result['region_id'];

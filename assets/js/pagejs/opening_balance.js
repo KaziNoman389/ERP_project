@@ -54,32 +54,7 @@
             data: { edit_id: eid, edit_balance: edit_balance },
             dataType: "text",
             success: function(result_1) {
-                // $.ajax({
-                //     url: "../../apis/apis_n/api.php",
-                //     type: "post",
-                //     data: { 'req': '9', 'param': '33', 'get': 'body' },
-                //     dataType: "json",
-                //     success: function(result) {
-                //         if (result_1 == 'true') {
-                //             Swal.fire({
-                //                     position: 'top-end',
-                //                     icon: 'success',
-                //                     title: 'Opening Balance has been edited',
-                //                     showConfirmButton: false,
-                //                     timer: 1000
-                //                 })
-                //                 // $("#opening_balance_table").html(result);
-                //         } else {
-                //             Swal.fire({
-                //                 position: 'top-end',
-                //                 icon: 'error',
-                //                 title: 'Something Went Wrong. Please Try Again',
-                //                 showConfirmButton: false,
-                //                 timer: 1000
-                //             })
-                //         }
-                //     }
-                // });
+                
             }
 
         });

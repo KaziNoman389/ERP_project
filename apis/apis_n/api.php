@@ -586,7 +586,7 @@
 		
 		return $rHTML;
     }
-	
+
 
 
 	//---------------------------------------------------------------------------------------
@@ -681,6 +681,7 @@
 		
 		return $rHTML;
     }
+
 
 	
 	//----------------------------------------------------------------------------------------
@@ -1538,6 +1539,8 @@
 	}
 
 
+
+
 	//----------------------------------------------------------------------------------------
 	//-----------------------Routes Table Functions start-------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -1595,6 +1598,8 @@
 		
 		return $rHTML;
 	}
+
+
 
 
 	//-----------------------------------------------------------------------------------------
@@ -1872,6 +1877,7 @@
 		return $rHTML;
 	}
 
+
 	
 	//-----------------------------------------------------------------------------------------
 	//-------------------------Opening Balance Table Functions start---------------------------
@@ -1913,6 +1919,8 @@
 		return $rHTML;
 	}
 	
+
+
 	//-----------------------------------------------------------------------------------------
 	//-----------------------Distributors Target Table Functions start ------------------------
 	//-----------------------------------------------------------------------------------------
@@ -1953,7 +1961,7 @@
 		
 		return $rHTML;
 	}
-	
+
 	// distri_target_table_view_modal -->[ main purpose is to fetch all the data of the input fields in the modal view ]
 	function getTableHTML_distri_target_SelectedID($sql,$bodyOnly=1){
 		global $con, $uid, $dept_id;
@@ -1972,7 +1980,7 @@
 		
 		return $rHTML;
 	}
-	
+
 	// distri_target_table_view_modal -->[ main purpose is to fetch all the data of the input fields in the modal view ]
 	function getTableHTML_name_SelectedID($sql,$bodyOnly=1){
 		global $con, $uid, $dept_id;
@@ -2043,7 +2051,6 @@
 		}
 		return $rHTML;
 	}
-	
 
 	// distri_target_details_table_view_search_region_name -->[ main purpose is to search region names data in the view_distri_target modal table ]
 	function getTableHTML_Distri_target_details_search_region_names_SelectedID($sql,$bodyOnly=1){
@@ -2069,7 +2076,6 @@
 		}
 		return $rHTML;
 	}
-
 
 	// search using region_id in view modal table
 	function getTableHTML_search_region_SelectedID($sql,$bodyOnly=1){
@@ -2193,6 +2199,7 @@
 		}
 		return $rHTML;
 	}
+
 
 
 	//-----------------------------------------------------------------------------------------
@@ -2338,7 +2345,6 @@
 		}
 		return $rHTML;
 	}
-
 	
 	// apps_table_add_modal -->[ main purpose to add the functions(name) for selected app id and display in select2 ]
 	function getSelectedHTML_function_filter_names_SelectedID($sql,$bodyOnly=1){
@@ -2372,8 +2378,9 @@
     }
 
 	
+	
 	//-----------------------------------------------------------------------------------------
-	//------------------------------ Product Category Table Functions start -------------------------------
+	//----------------------- Product Category Table Functions start --------------------------
 	//-----------------------------------------------------------------------------------------
 	
 	// product_categories_table_view -->[ main purpose is to fetch table data in the product_categories table ] 

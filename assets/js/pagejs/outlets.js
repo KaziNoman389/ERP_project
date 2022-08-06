@@ -216,8 +216,10 @@
                 $("#edit_approved > [value=" + result['is_approved'] + "]").attr("selected", "true");
                 $("#edit_approved").trigger("change");
 
-                $("#edit_status > [value=" + result['is_active'] + "]").attr("selected", "true");
-                $("#edit_status").trigger("change");
+                $("#edit_status").val(result['is_active']);
+
+                // $("#edit_status > [value=" + result['is_active'] + "]").attr("selected", "true");
+                // $("#edit_status").trigger("change");
             }
         });
     });
